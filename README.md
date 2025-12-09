@@ -144,12 +144,12 @@ When tailoring CAM for your own use case, edit files within:
 # Force reinstall even if versions match:
 ./cam.sh upgrade --force
 
-# You may get hook errors during upgrading, after upgrade, quit Claude & relaunch in --verbose.
-# You shouldn't see any hook errors. If you do, prompt Claude to fix.
+# You may get hook errors during upgrading, after upgrade, re-run ./cam.sh upgrade --force.
+# This happens due to active 'depracated' hooks being overwritten with the revised hooks, sometimes causing conflicts.
 # Ensure any changes you make to CAM is in ~/.claude/cam-template
 ```
 
-This will update the projects CAM interface accordingly: `cam_core.py` `cam.sh`
+This will update the projects (.claude/cam) CAM interface accordingly: `cam_core.py` `cam.sh`
 
 ### <ins>Project Structure</ins>
 
@@ -270,7 +270,6 @@ rm .claude/ralph-loop.local.md
 #### Architecture Notes
 
 - **CAM is independent**: Works fully without Ralph plugin installed
-- **Ralph is independent**: Works fully without CAM (graceful fallback)
 - **Combined**: Ralph queries CAM at start, stores to CAM at end
 - **No special access**: Ralph uses same CAM interface as any Claude session
 
@@ -293,19 +292,6 @@ CAM automatically builds a knowledge graph with relationships between embeddings
 - **SessionEnd**: Runs `graph build` automatically at session close
 - **PostToolUse**: Creates "modifies" relationships when editing `.ai/` files
 - **Ingest**: Parses markdown for cross-references and creates "references" relationships
-
----
-
-<h3 align="center">
-Exit
-</h3>
-
-<p align="center">
-After cloning the repo, setting up the interface, and initializing CAM into your project. Directing Claude to capture and deliver codebase, project, and documentation context into your CAM database, you should be good to go. 
-<p align="center">
-Running Claude with `--verbose` is recommended so you can catch any bugs, errors, or unexpected behavior in the CAM system. Claude will iteratively query, read, write, and refine the CAM database + documentation system - between user prompts, before and after tool use, and at session boundaries creating a seamless loop of contextual awareness that compounds over time.
-
-</p>
 
 ---
 
