@@ -165,6 +165,7 @@ class CAM:
         self.graph_conn = sqlite3.connect(GRAPH_DB)
         self.file_index_conn = sqlite3.connect(FILE_INDEX_DB)
         self._ensure_file_index_table()
+        self._ensure_v2_tables()  # Auto-migration for v2.0 schema
         self._log("CAM initialized")
 
     def __enter__(self):
@@ -197,6 +198,68 @@ class CAM:
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_file_last_ingested ON file_index(last_ingested_at)")
         cursor.execute("CREATE INDEX IF NOT EXISTS idx_file_source_type ON file_index(source_type)")
         self.file_index_conn.commit()
+
+    def _ensure_v2_tables(self):
+        """
+        Auto-migration for v2.0 schema (Phase 1 features).
+        Creates decisions/invariants tables and adds importance_tier column if missing.
+        Safe to call multiple times - uses IF NOT EXISTS / checks before ALTER.
+        """
+        # 1. Add importance_tier column to embeddings table if missing
+        try:
+            v_cursor = self.vectors_conn.cursor()
+            # Check if column exists
+            v_cursor.execute("PRAGMA table_info(embeddings)")
+            columns = [row[1] for row in v_cursor.fetchall()]
+            if 'importance_tier' not in columns and 'embeddings' in [t[0] for t in v_cursor.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()]:
+                v_cursor.execute("""
+                    ALTER TABLE embeddings
+                    ADD COLUMN importance_tier TEXT DEFAULT 'normal'
+                """)
+                self.vectors_conn.commit()
+                self._log("Migration: Added importance_tier column to embeddings")
+        except Exception as e:
+            # Table may not exist yet (created on first embed)
+            pass
+
+        # 2. Create decisions table if not exists
+        m_cursor = self.metadata_conn.cursor()
+        m_cursor.execute("""
+            CREATE TABLE IF NOT EXISTS decisions (
+                id TEXT PRIMARY KEY,
+                embedding_id TEXT,
+                title TEXT NOT NULL,
+                rationale TEXT,
+                alternatives_considered TEXT,
+                constraints_applied TEXT,
+                importance_tier TEXT DEFAULT 'normal',
+                decision_type TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        m_cursor.execute("CREATE INDEX IF NOT EXISTS idx_decisions_tier ON decisions(importance_tier)")
+        m_cursor.execute("CREATE INDEX IF NOT EXISTS idx_decisions_type ON decisions(decision_type)")
+        m_cursor.execute("CREATE INDEX IF NOT EXISTS idx_decisions_created ON decisions(created_at)")
+
+        # 3. Create invariants table if not exists
+        m_cursor.execute("""
+            CREATE TABLE IF NOT EXISTS invariants (
+                id TEXT PRIMARY KEY,
+                category TEXT NOT NULL,
+                statement TEXT NOT NULL,
+                rationale TEXT,
+                enforcement TEXT DEFAULT 'recommended',
+                validation_method TEXT,
+                exceptions TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        m_cursor.execute("CREATE INDEX IF NOT EXISTS idx_invariants_category ON invariants(category)")
+        m_cursor.execute("CREATE INDEX IF NOT EXISTS idx_invariants_enforcement ON invariants(enforcement)")
+
+        self.metadata_conn.commit()
 
     def _log(self, message: str):
         """Append to operations log"""
