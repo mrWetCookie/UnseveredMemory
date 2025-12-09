@@ -308,6 +308,5 @@ Running Claude with `--verbose` is recommended so you can catch any bugs, errors
 </p>
 
 ---
-MIT License see [license](LICENSE) file for details.
 
 .ai/ documentation system inspired by  [Coolify](https://github.com/coollabsio/coolify).
