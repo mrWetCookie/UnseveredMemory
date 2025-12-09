@@ -13,6 +13,72 @@ All notable changes to the CAM (Continuous Architectural Memory) system are docu
 
 ---
 
+## [1.8.0] - 2025-12-08
+
+### Added - Phase 10: Architectural Memory Evolution Framework
+
+Complete MVP architecture for next-generation CAM system addressing context amnesia and enabling declarative LLM development patterns.
+
+#### Phase 1: Extending CAM's Data Model
+- **4-Layer Semantic Architecture**: Enhanced embeddings (importance_tier) + relationships (causal/temporal/semantic) + decisions (rationale + alternatives) + invariants (constraints)
+- **Importance Tiers**: Critical|High|Normal|Reference for selective knowledge preservation
+- **Decision Rationale Store**: Persistent storage of WHY decisions were made, not just WHAT
+- **Causal Relationship Tracking**: Bug → Root Cause → Fix → Why chains
+- **Architectural Invariants Store**: Constraints that must be maintained across sessions
+
+#### Phase 2: Modifying Hook Systems (Claude Code Compliant)
+- **Enhanced UserPromptSubmit Hook**: Importance-weighted retrieval + invariant injection + decision context
+- **Enhanced PostToolUse Hook**: Decision capture on every operation + invariant violation detection + auto-ingestion
+- **Enhanced PreCompact Hook**: Critical decision extraction + causal chain preservation
+- **SessionEnd Hook Integration**: Atomic commit generation + graph building
+- **Schema Compliance**: Respects Claude Code hook schema limitations per hook type
+
+#### Phase 3: Building Query Language
+- **Declarative Query DSL** (TOML-based): Semantic search + importance filtering + constraint filtering + graph traversal + time-based filtering
+- **CAMQueryExecutor**: Multi-step query execution with result composition
+- **CLI Commands**: `query-dsl`, `infer-query-dsl`, `execute-query`
+- **Research Base**: LOTUS semantic queries + Elastic Query DSL patterns
+
+#### Phase 4: Implementing CMR Concepts
+- **Contextual Memory Reweaving (CMR)**: Preserve decision inflection points instead of linear summaries
+- **InflectionPointDetector**: Identifies WHERE reasoning changed direction
+- **CMRPrimer Storage & Reconstruction**: 4-hour TTL primers for post-compact recovery
+- **Token-Efficient Compression**: ~300 tokens to preserve critical decisions
+- **Research Base**: CMR latent state reconstruction paper + recurrent context compression
+
+### Added - SessionEnd Hook with Conventional Commits Integration
+
+New hook: `session-end-with-commits.sh` (11-phase atomic pipeline)
+
+- **Phase 1-2**: Gather session intelligence + determine commit type from operation keywords
+- **Phase 3-4**: Infer scope from files + extract description from CAM decisions
+- **Phase 5-6**: Build commit message (subject + body + footers) + validate Conventional Commits format
+- **Phase 7-11**: Execute commit + build knowledge graph + store summary + cleanup + return status
+- **Type Inference**: feat|fix|refactor|perf|test|style|chore from operation analysis
+- **Scope Inference**: cam|hooks|cli|data-model|query-dsl|cmr from file patterns
+- **Session Metadata**: Session-ID, date, operation counts, co-author in commit footers
+
+### Added - GitHub Spec Commit Documentation
+
+Comprehensive Conventional Commits 1.0.0 specification:
+
+- **8 Commit Types**: feat (MINOR), fix (PATCH), breaking (MAJOR), chore|ci|docs|style|refactor|perf|test (NONE)
+- **Scope Categories**: cam, hooks, cli, data-model, query-dsl, cmr, docs, git
+- **Auto-Generation Algorithm**: Implemented in SessionEnd hook
+- **Type + Scope Inference Rules**: Keyword-based type detection, file-pattern-based scope detection
+- **Commit Examples**: Breaking changes, bug fixes, feature additions, documentation updates
+
+### Files Added
+
+- `.claude/Plan #10 Phase 1 - Extending CAM's Data Model.md` (850+ lines, schema design + implementation)
+- `.claude/Plan #10 Phase 2 - Modifying Hook Systems.md` (800+ lines, hook pipeline + code examples)
+- `.claude/Plan #10 Phase 3 - Building Query Language.md` (650+ lines, DSL spec + executor + examples)
+- `.claude/Plan #10 Phase 4 - Implementing CMR Concepts.md` (700+ lines, CMR architecture + compression)
+- `.claude/Github Spec Commit.md` (600+ lines, commit standard + validation + examples)
+- `.claude/cam-template/hooks/session-end-with-commits.sh` (400+ lines, 11-phase atomic commit pipeline)
+
+---
+
 ## [1.7.1] - 2025-12-08
 
 ### Fixed
