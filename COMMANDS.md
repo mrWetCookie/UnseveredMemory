@@ -322,5 +322,3 @@ cat ~/.claude/cam-template/VERSION.txt
 ```
 
 ---
-
-MIT License - see [LICENSE](LICENSE) for details.
