@@ -16,14 +16,14 @@ CAM
 Continuous Architectural Memory
 </h3>
 
+<div align="center">
+    
+![N](https://img.shields.io/badge/CAM-v1.7.2-ffd745?logo=python)
+
+</div>
+
 <p align="center">A semantic memory system designed for Claude Code. Providing a interface layer for cross-session context through embeddings, annotations, summarized session notes and relational knowledge graphs – automatically & persistently triggered with Claude Hooks.
 </p>
-
-<div align ="center">
-<strong>
-v1.7.0: Context Crystallization is live. PreCompact hook now preserves session knowledge before /compact, with automatic post-compact recovery via primer injection.
-</strong>
-</div>
 
 ### Overview
 
@@ -36,7 +36,7 @@ CAM gives specifically Claude, persistent memory across sessions by:
 
 ### Two Sources of Truth
 
-1. **Hub** (`.ai/` directory): Structured documentation for your project
+1. **Hub** (`.ai/` directory): Structured documentation for your project | <strong>.ai/ documentation system inspired by [Coolify](https://github.com/coollabsio/coolify).</strong>
 
 2. **CAM** (Semantic database): Cross-session memory with embeddings and graphs
 
@@ -111,43 +111,17 @@ Claude Code has automatic hook integration. CAM queries and updates happen autom
 
 > When you Edit/Write a file, CAM automatically ingests the new content using change detection (only re-ingests if content hash changed).
 
-#### Gemini & Cursor
+### <ins>Commands & Extras</ins>
 
 Since CAM utilizes Claude Code Hooks, any agent/API that can't be used in Claude Code will have to be manually steered. 
 
 CAM invocation instructions are embedded in their entry point files (`GEMINI.md` and `cursor-rules.mdc`) during the `init-cam.sh` scaffolding.
 
-Run CAM commands manually in terminal:
-
-```bash
-# Query CAM (returns top 5 results by default)
-./.claude/cam/cam.sh query "your intent"
-
-# Query with custom result count
-./.claude/cam/cam.sh query "authentication patterns" 10
-
-# Add an ephemeral note to CAM
-./.claude/cam/cam.sh note "Title" "Content description"
-
-# Add note with custom tags
-./.claude/cam/cam.sh note "Bug Fix" "Fixed auth issue" "bugfix,auth"
-
-# Ingest file or directory
-./.claude/cam/cam.sh ingest .ai/ docs           # Documentation directory
-./.claude/cam/cam.sh ingest src/ code           # Source code directory
-./.claude/cam/cam.sh ingest . --dry-run         # Preview what would be ingested
-
-# Scan for new/modified files
-./.claude/cam/cam.sh scan .
-
-# View CAM statistics
-./.claude/cam/cam.sh stats
-
-# Build knowledge graph
-./.claude/cam/cam.sh graph build
-```
+For more information regarding how cam works you check out the [commands](COMMANDS.md) here.
 
 You can also prompt Claude semantically to run these scripts, as it has the directive to do so via the `~/.claude/CLAUDE.md` `yourproject/CLAUDE.md` similar to the Gemini & Cursor agents.
+
+---
 
 ### <ins>Iterations</ins>
 
@@ -204,43 +178,6 @@ your-project/
         └── venv/
 ```
 
-<h3 align="center">
-Exit
-</h3>
-
-<p align="center">
-After cloning the repo, setting up the interface, and initializing CAM into your project. Directing Claude to capture and deliver codebase, project, and documentation context into your CAM database, you should be good to go. 
-<p align="center">
-Running Claude with `--verbose` is recommended so you can catch any bugs, errors, or unexpected behavior in the CAM system. Claude will iteratively query, read, write, and refine the CAM database + documentation system - between user prompts, before and after tool use, and at session boundaries creating a seamless loop of contextual awareness that compounds over time.
-
-</p>
-
----
-### <ins>CAM Commands</ins>
-
-| Command | Description |
-|---------|-------------|
-| `./cam.sh version` | Show CAM version |
-| `./cam.sh stats` | Show CAM statistics |
-| `./cam.sh query "text" [top_k]` | Semantic search (default: 5 results) |
-| `./cam.sh get <id>` | Retrieve full embedding content by ID |
-| `./cam.sh note "title" "content" [tags]` | Add ephemeral note |
-| `./cam.sh ingest <path> [type]` | Ingest file or directory |
-| `./cam.sh scan <directory>` | Scan for new/modified files |
-| `./cam.sh check-file <path>` | Check single file status |
-| `./cam.sh file-stats` | Show file index statistics |
-| `./cam.sh annotate "content"` | Add manual annotation |
-| `./cam.sh relate <src> <tgt> <type> [weight]` | Create relationship between embeddings |
-| `./cam.sh find-doc <file_path>` | Lookup embedding ID by source file |
-| `./cam.sh upgrade` | Upgrade from template |
-| `./cam.sh graph build` | Build knowledge graph |
-| `./cam.sh graph stats` | Show graph statistics |
-| `./cam.sh eval all` | Run evaluation suite |
-| `./cam.sh ralph-loops` | List recent Ralph loops |
-| `./cam.sh ralph-history <id>` | View iterations for a loop |
-| `./cam.sh ralph-patterns "task"` | Find patterns from similar tasks |
-| `./cam.sh primer-status` | Show active session primers |
-
 ---
 
 ### <ins>Ralph Wiggum Integration</ins>
@@ -253,21 +190,6 @@ CAM v1.6.0 adds support for the [Ralph Wiggum](https://ghuntley.com/ralph/) iter
 - **Each Iteration**: Store iteration summary for analytics
 - **Loop End**: Store comprehensive outcome for future reference
 - **Cross-Loop Learning**: Future loops benefit from past successes
-
-#### CAM Commands for Ralph
-
-```bash
-# List recent Ralph loops
-./cam.sh ralph-loops
-./cam.sh ralph-loops --successful
-./cam.sh ralph-loops --limit 5 --outcome max_iterations
-
-# View iteration history for a specific loop
-./cam.sh ralph-history <loop_id>
-
-# Find patterns from similar tasks
-./cam.sh ralph-patterns "Build REST API"
-```
 
 #### Ralph Plugin Modifications
 
@@ -372,50 +294,20 @@ CAM automatically builds a knowledge graph with relationships between embeddings
 - **PostToolUse**: Creates "modifies" relationships when editing `.ai/` files
 - **Ingest**: Parses markdown for cross-references and creates "references" relationships
 
-#### Manual Graph Commands
-
-```bash
-# Build/rebuild knowledge graph
-./cam.sh graph build
-
-# View graph statistics
-./cam.sh graph stats
-
-# Create manual relationship
-./cam.sh relate <source_id> <target_id> <type> [weight]
-
-# Find document embedding ID
-./cam.sh find-doc ".ai/patterns/api-and-routing.md"
-```
-
 ---
 
-### <ins>Troubleshooting</ins>
+<h3 align="center">
+Exit
+</h3>
 
+<p align="center">
+After cloning the repo, setting up the interface, and initializing CAM into your project. Directing Claude to capture and deliver codebase, project, and documentation context into your CAM database, you should be good to go. 
+<p align="center">
+Running Claude with `--verbose` is recommended so you can catch any bugs, errors, or unexpected behavior in the CAM system. Claude will iteratively query, read, write, and refine the CAM database + documentation system - between user prompts, before and after tool use, and at session boundaries creating a seamless loop of contextual awareness that compounds over time.
 
-```bash
-# Verify settings.json has hooks
-cat ~/.claude/settings.json | jq '.hooks | keys'
+</p>
 
-# Check hook paths are correct for your system
-cat ~/.claude/settings.json | jq '.hooks.SessionStart'
-```
-```bash
-# Verify .env exists and has key
-cat ~/.claude/hooks/.env
-
-# Test Gemini API directly
-curl -s "https://generativelanguage.googleapis.com/v1beta/models?key=$(grep GEMINI_API_KEY ~/.claude/hooks/.env | cut -d= -f2)"
-```
-```bash
-# Initialize CAM in current project
-~/.claude/hooks/init-cam.sh
-
-# Verify CAM exists
-ls -la .claude/cam/
-```
 ---
-
 MIT License see [license](LICENSE) file for details.
 
 .ai/ documentation system inspired by  [Coolify](https://github.com/coollabsio/coolify).
