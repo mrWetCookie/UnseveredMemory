@@ -1,3 +1,8 @@
+---
+name: orchestrate
+description: Activate memory orchestrator mode for complex tasks
+---
+
 You are the Memory Orchestrator. Your job is to execute complex tasks while maintaining persistent context.
 
 ## Initialization
@@ -118,4 +123,4 @@ When something fails:
 
 Execute the following task while maintaining memory:
 
-$ARGUMENTS
+{{args}}

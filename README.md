@@ -10,7 +10,11 @@ A markdown-based memory system for Claude Code with enforced persistence.
 
 </div>
 
-## What makes this different?
+## Changelog
+
+- Added support for Claude plugins + npx packaging
+
+## What Makes This Different
 
 Most memory systems inject context at session start and hope Claude remembers. This doesn't work because:
 
@@ -100,8 +104,8 @@ cd /path/to/your/project
 - `CLAUDE.md` - Global memory protocol
 - `settings.json` - Hook configuration (3 hooks)
 - `hooks/` - memory-load, memory-remind, memory-save
-- `skills/harness/` - Workflow instructions
-- `commands/harness.md` - Orchestrator command
+- `skills/orchestrate/` - Workflow instructions
+- `commands/orchestrate.md` - Orchestrator command
 
 **Per-Project**:
 ```
@@ -158,7 +162,7 @@ Claude updates `.ai/` when patterns emerge (3+ uses).
 For complex multi-step tasks:
 
 ```
-/harness Implement user authentication with JWT
+/orchestrate Implement user authentication with JWT
 ```
 
 The orchestrator:
@@ -192,10 +196,10 @@ UnseveredMemory/
 ├── scripts/                  # Hook scripts (plugin)
 ├── hooks/                    # Hook scripts + hooks.json
 ├── skills/
-│   └── harness/
+│   └── orchestrate/
 │       └── SKILL.md
 ├── commands/
-│   └── harness.md
+│   └── orchestrate.md
 └── templates/
     └── [all templates]
 ```
@@ -215,7 +219,7 @@ UnseveredMemory/
 | CLAUDE.md only | ~30% |
 | + SessionStart | ~50% |
 | + UserPromptSubmit | ~75% |
-| + /harness orchestrator | ~95% |
+| + /orchestrate orchestrator | ~95% |
 
 ## Uninstall
 
@@ -225,8 +229,8 @@ npx unsevered-memory uninstall
 
 # Manual
 rm -rf ~/.claude/hooks/memory-*.sh
-rm -rf ~/.claude/skills/harness
-rm -rf ~/.claude/commands/harness.md
+rm -rf ~/.claude/skills/orchestrate
+rm -rf ~/.claude/commands/orchestrate.md
 
 # Project files (optional)
 rm -rf .claude/memory
